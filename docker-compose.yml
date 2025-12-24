@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  backend-orders:
+    build: ./backend-orders
+    container_name: backend-orders
+    ports:
+      - "3001:3001"
+
+  kong:
+    image: kong:latest
+    container_name: kong
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./kong/kong.yml:/kong/declarative/kong.yml
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+    depends_on:
+      - backend-orders

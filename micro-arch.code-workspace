@@ -1,0 +1,28 @@
+{
+    "folders": [
+        {
+            "path": "backend-orders"
+        }
+    ],
+    "settings": {
+        // 🔒 FORCE Prettier ONLY in this workspace
+        "editor.formatOnSave": true,
+        "[typescript]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescriptreact]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        // Disable built-in TS formatter
+        "typescript.format.enable": false,
+        "javascript.format.enable": false,
+        // ESLint = validation only
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": false
+        },
+        "eslint.experimental.useFlatConfig": true,
+        "eslint.validate": [
+            "typescript"
+        ]
+    }
+}
