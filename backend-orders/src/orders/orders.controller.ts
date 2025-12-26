@@ -1,6 +1,6 @@
 import { Controller, Get, Post } from '@nestjs/common';
 
-@Controller('orders')
+@Controller()
 export class OrdersController {
   @Get('health')
   health() {
@@ -10,6 +10,7 @@ export class OrdersController {
   @Post()
   create() {
     return {
+      product: 'order-item',
       orderId: crypto.randomUUID(),
       status: 'PENDING',
     };
