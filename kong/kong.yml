@@ -23,5 +23,12 @@ services:
     routes:
       - name: orders-route
         paths:
-          - /api
+          - /api/orders
+        strip_path: true
+  - name: inventory-service
+    url: http://backend-inventory:3002
+    routes:
+      - name: inventory-route
+        paths:
+          - /api/inventory
         strip_path: true
