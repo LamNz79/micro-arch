@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { OrdersController } from 'src/orders/orders.controller';
 import { OrdersModule } from 'src/orders.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { OrdersModule } from 'src/orders.module';
       isGlobal: true, // 👈 important
     }),
     OrdersModule,
+    HttpModule,
   ],
   controllers: [AppController, OrdersController],
   providers: [AppService],

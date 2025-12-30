@@ -4,4 +4,4 @@ import { inventoryController } from 'src/inventory/inventory.controller';
 @Module({
     controllers: [inventoryController],
 })
-export class inventoryModule { }
+export class InventoryModule { }

@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { inventoryModule } from 'src/inventory.module';
+import { InventoryModule } from 'src/modules/inventory.module';
 import { ConfigModule } from '@nestjs/config';
+import { ReserveModule } from 'src/modules/reserve.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // 👈 important
     }),
-    inventoryModule],
+    InventoryModule,
+    ReserveModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
