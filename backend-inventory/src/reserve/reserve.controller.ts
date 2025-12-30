@@ -1,18 +1,14 @@
+import { ReserveStockRequestDto, ReserveStockResponseDto } from '@/dto/reserve-stock.dto';
 import { Body, Controller, Post } from '@nestjs/common';
-import type{InventoryReserveRequest, InventoryReserveResponse} from "@contracts/inventory.contract";
+
 
 @Controller('reserve')
 export class ReserveController {
     @Post()
-    reserve(@Body() body: InventoryReserveRequest): InventoryReserveResponse {
-        if (body.quantity > 5) {
-            return {
-                success: false,
-                reason: 'OUT_OF_STOCK',
-            };
-        }
-        return {
-            success: true,
-        };
+    reserve(@Body() body: ReserveStockRequestDto): ReserveStockResponseDto {
+        if (body.quantity <= 0) return { reserved: false, reason: 'INVALID_STOCK' }
+        const inStock = body.quantity <= 10;
+        if (!inStock) return { reserved: false, reason: 'OUT_OF_STOCK' };
+        return { reserved: true };
     }
 }
