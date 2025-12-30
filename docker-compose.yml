@@ -1,11 +1,15 @@
 services:
   backend-orders:
-    build: ./backend-orders
+    build:
+      context: .
+      dockerfile: Dockerfile.orders
     container_name: backend-orders
     ports:
       - "3001:3001"
   backend-inventory:
-    build: ./backend-inventory
+    build:
+      context: .
+      dockerfile: Dockerfile.inventory
     container_name: backend-inventory
     ports:
       - "3002:3002"
