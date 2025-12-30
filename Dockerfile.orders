@@ -32,11 +32,11 @@ RUN npm ci --only=production
 
 # Copy built application and contracts
 COPY --from=builder /app/backend-orders/dist ./dist
-COPY --from=builder /app/contracts ../contracts
+COPY --from=builder /app/contracts ./contr
 
 # Add runtime path resolver
 RUN npm install module-alias
 
 EXPOSE 3001
 
-CMD ["node", "-r", "module-alias/register", "dist/main.js"]
+CMD ["node", "-r", "module-alias/register", "dist/backend-orders/src/main.js"]
