@@ -15,10 +15,10 @@ export class InventoryClient {
             'INVENTORY_BASE_URL',
             'http://backend-inventory:3002'
         );
-        this.timeoutMs = this.config.get<number>(
+        this.timeoutMs = Number(this.config.get<number>(
             'INVENTORY_TIMEOUT_MS',
             2000
-        )
+        ))
     }
     async reserveStock(productId: string, quantity: number) {
         try {
@@ -30,7 +30,9 @@ export class InventoryClient {
                     )
             );
             return response.data;
-        } catch {
+        } catch (err) {
+            console.log(err);
+
             // Infrastructure failure (NOT business failure)
             throw new ServiceUnavailableException(
                 'Inventory service unavailable'
