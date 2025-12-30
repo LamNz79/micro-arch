@@ -1,7 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, retry, timeout } from 'rxjs';
+import {InventoryReserveRequest} from "@contracts/inventory.contract";
 
 @Controller()
 export class OrdersController {
@@ -15,11 +16,18 @@ export class OrdersController {
   async createOrder(
     @Body() body: { productId: string; quantity: number },
   ) {
+    const payload: InventoryReserveRequest = {
+      productId: body.productId,
+      quantity: body.quantity,
+      orderRequestId: randomUUID()
+    }
     const response = await firstValueFrom(
-      this.http.post('http://backend-inventory:3002/reserve', {
-        producId: body.productId,
-        quantity: body.quantity
-      })
+      this.http
+        .post('http://backend-inventory:3002/reserve', payload)
+        .pipe(
+          timeout(2000),
+          retry(1)
+        )
     )
     if (!response.data.reserved) {
       return {
@@ -28,7 +36,7 @@ export class OrdersController {
       }
     }
     return {
-      orderId: randomUUID,
+      orderId: randomUUID(),
       status: 'CONFIRMED'
     }
   }

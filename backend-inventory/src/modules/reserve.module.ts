@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ReserveController } from 'src/reserve/reserve.controller';
+import { ReserveController } from 'backend-inventory/src/reserve/reserve.controller';
 
 @Module({
     controllers: [ReserveController],
