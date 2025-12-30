@@ -1,4 +1,4 @@
-import { inventoryController } from '@/inventory/inventory.controller';
+import { inventoryController } from '@/controllers/inventory.controller';
 import { Module } from '@nestjs/common';
 
 @Module({
