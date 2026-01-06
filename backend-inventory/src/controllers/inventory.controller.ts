@@ -1,7 +1,7 @@
 import { Controller, Get, Post } from '@nestjs/common';
 
 @Controller()
-export class inventoryController {
+export class InventoryController {
   @Get('health')
   health() {
     return { status: 'ok' };
