@@ -8,6 +8,7 @@ services:
       - "3001:3001"
     env_file:
       - ./backend-orders/.env
+    image: lamlun123/backend-orders:1.0.1
   backend-inventory:
     build:
       context: .
@@ -17,6 +18,20 @@ services:
       - "3002:3002"
     env_file:
       - ./backend-inventory/.env
+    image: lamlun123/backend-inventory:1.0.1
+    depends_on:
+      - inventory-db
+  inventory-db:
+    image: postgres:15
+    container_name: inventory-db
+    environment:
+      POSTGRES_DB: inventory
+      POSTGRES_USER: inventory_user
+      POSTGRES_PASSWORD: inventory_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - inventory-data:/var/lib/postgresql/data
   kong:
     image: kong:latest
     container_name: kong
@@ -30,3 +45,5 @@ services:
     depends_on:
       - backend-orders
       - backend-inventory
+volumes:
+  inventory-data:
