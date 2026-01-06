@@ -1,12 +1,51 @@
 import { ReserveStockRequestDto, ReserveStockResponseDto } from "@/dto/reserve-stock.dto";
+import { PrismaService } from "@/prisma/prisma.service";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class ReserveService {
-    reserve(body: ReserveStockRequestDto): ReserveStockResponseDto {
-        if (body.quantity <= 0) return { reserved: false, reason: 'INVALID_STOCK' }
-        const inStock = body.quantity <= 10;
-        if (!inStock) return { reserved: false, reason: 'OUT_OF_STOCK' };
-        return { reserved: true };
+    constructor(private readonly prisma: PrismaService) { }
+    async reserveStock(body: ReserveStockRequestDto): Promise<ReserveStockResponseDto> {
+        const { productId, quantity } = body
+        try {
+            const result = await this.prisma.$transaction(async (tx) => {
+                const product = await tx.product.findUnique({
+                    where: { id: productId }
+                });
+                if (!product) {
+                    return {
+                        reserved: false,
+                        reason: 'Product not found'
+                    } as ReserveStockResponseDto
+                }
+                if (product.stock < quantity) {
+                    return {
+                        reserved: false,
+                        reason: 'Insufficient stock'
+                    } as ReserveStockResponseDto
+                }
+                await tx.product.update({
+                    where: { id: productId },
+                    data: { stock: product.stock - quantity }
+                })
+                return {
+                    reserved: true,
+                    reason: ""
+                } as ReserveStockResponseDto
+            });
+            return result
+        } catch (error) {
+            console.error("ReserveStock transaction error:", error);
+            if (error instanceof AggregateError) {
+                for (const e of error.errors) {
+                    console.error("  Inner error:", e);
+                }
+            }
+            return {
+                reserved: false,
+                reason: "Internal error: see server logs",
+            };
+
+        }
     }
 }
