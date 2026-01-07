@@ -4,29 +4,28 @@ WORKDIR /app
 
 # Copy shared files first
 COPY tsconfig.base.json ./
-COPY contracts ./contracts
 
 # Copy service-specific files
-COPY backend-inventory/package*.json ./backend-inventory/
-COPY backend-inventory/tsconfig.json ./backend-inventory/
-COPY backend-inventory/nest-cli.json ./backend-inventory/
+COPY backend-nestjs/inventory/package*.json ./backend-nestjs/inventory/
+COPY backend-nestjs/inventory/tsconfig.json ./backend-nestjs/inventory/
+COPY backend-nestjs/inventory/nest-cli.json ./backend-nestjs/inventory/
 
 # Install dependencies
-WORKDIR /app/backend-inventory
+WORKDIR /app/backend-nestjs/inventory
 RUN npm ci
 
 # Copy Prisma files AND config
-COPY backend-inventory/prisma ./prisma
-COPY backend-inventory/prisma.config.ts ./prisma.config.ts
+COPY backend-nestjs/inventory/prisma ./prisma
+COPY backend-nestjs/inventory/prisma.config.ts ./prisma.config.ts
 
 # Generate Prisma Client
 RUN npx prisma generate
 
 # Copy source code
-COPY backend-inventory/src ./src
+COPY backend-nestjs/inventory/src ./src
 
 # Copy entrypoint script
-COPY backend-inventory/docker-entrypoint.sh ./docker-entrypoint.sh
+COPY backend-nestjs/inventory/docker-entrypoint.sh ./docker-entrypoint.sh
 
 # Build
 RUN npm run build
@@ -36,18 +35,17 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY backend-inventory/package*.json ./
+COPY backend-nestjs/inventory/package*.json ./
 
 # Copy Prisma files
-COPY backend-inventory/prisma ./prisma
-COPY backend-inventory/prisma.config.ts ./prisma.config.ts
+COPY backend-nestjs/inventory/prisma ./prisma
+COPY backend-nestjs/inventory/prisma.config.ts ./prisma.config.ts
 
 RUN npm ci --only=production && \
     npx prisma generate
 
-COPY --from=builder /app/backend-inventory/dist ./dist
-COPY --from=builder /app/contracts ../contracts
-COPY --from=builder /app/backend-inventory/docker-entrypoint.sh /app/docker-entrypoint.sh
+COPY --from=builder /app/backend-nestjs/inventory/dist ./dist
+COPY --from=builder /app/backend-nestjs/inventory/docker-entrypoint.sh /app/docker-entrypoint.sh
 
 RUN npm install module-alias && \
     chmod +x /app/docker-entrypoint.sh

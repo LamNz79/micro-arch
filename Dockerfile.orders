@@ -4,21 +4,20 @@ WORKDIR /app
 
 # Copy shared files first
 COPY tsconfig.base.json ./
-COPY contracts ./contracts
 
 # Copy service-specific files
-COPY backend-orders/package*.json ./backend-orders/
-COPY backend-orders/tsconfig.json ./backend-orders/
-COPY backend-orders/nest-cli.json ./backend-orders/
+COPY backend/orders/package*.json ./backend/orders/
+COPY backend/orders/tsconfig.json ./backend/orders/
+COPY backend/orders/nest-cli.json ./backend/orders/
 
 # Install dependencies
-WORKDIR /app/backend-orders
+WORKDIR /app/backend/orders
 RUN npm ci
 
 # Copy source code
-COPY backend-orders/src ./src
+COPY backend/orders/src ./src
 
-# Build (now it can find contracts)
+# Build
 RUN npm run build
 
 # Production stage
@@ -27,16 +26,15 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copy package files and install production deps
-COPY backend-orders/package*.json ./
+COPY backend/orders/package*.json ./
 RUN npm ci --only=production
 
-# Copy built application and contracts
-COPY --from=builder /app/backend-orders/dist ./dist
-COPY --from=builder /app/contracts ./contr
+# Copy built application
+COPY --from=builder /app/backend/orders/dist ./dist
 
 # Add runtime path resolver
 RUN npm install module-alias
 
 EXPOSE 3001
 
-CMD ["node", "-r", "module-alias/register", "dist/backend-orders/src/main.js"]
+CMD ["node", "-r", "module-alias/register", "dist/backend/orders/src/main.js"]

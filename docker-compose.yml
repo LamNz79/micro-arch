@@ -1,23 +1,23 @@
 services:
   backend-orders:
     build:
-      context: .
-      dockerfile: Dockerfile.orders
+      context: ./backend-nestjs/orders-service
+      dockerfile: Dockerfile
     container_name: backend-orders
     ports:
       - "3001:3001"
     env_file:
-      - ./backend-orders/.env
+      - ./backend-nestjs/orders-service/.env
     image: lamlun123/backend-orders:1.0.1
   backend-inventory:
     build:
-      context: .
-      dockerfile: Dockerfile.inventory
+      context: ./backend-nestjs/inventory-service
+      dockerfile: Dockerfile
     container_name: backend-inventory
     ports:
       - "3002:3002"
     env_file:
-      - ./backend-inventory/.env
+      - ./backend-nestjs/inventory-service/.env
     image: lamlun123/backend-inventory:1.0.1
     depends_on:
       - inventory-db

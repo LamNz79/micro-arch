@@ -1,7 +1,7 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "../",
+    "rootDir": "src", // Changed: compile from current service directory
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
@@ -15,14 +15,11 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "..",
+    "baseUrl": "src", // Changed: resolve from current directory
     "paths": {
-      "@contracts/*": [
-        "contracts/*"
-      ],
       "@/*": [
-        "backend-orders/src/*"
-      ]
+        "./*"
+      ] // Changed: simpler mapping
     },
     "incremental": true,
     "skipLibCheck": true,
@@ -30,7 +27,7 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
+    "noFallthroughCasesInSwitch": false
   },
   "include": [
     "src/**/*"
