@@ -1,7 +1,7 @@
 {
     "private": true,
     "workspaces": [
-        "frontend-shell",
+        "frontend",
         "orders-service"
     ]
 }
