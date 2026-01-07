@@ -1,10 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  console.log(process.env.PORT);
+  const logger = new Logger('Bootstrap');
+  const port = process.env.PORT ?? 3001;
 
-  await app.listen(process.env.PORT ?? 3001, '0.0.0.0');
+  logger.log(`Application is running on: ${port}`);
+
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();

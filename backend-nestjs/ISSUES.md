@@ -1,7 +1,7 @@
 # Backend Improvement Plan
 
 ## General
-- [ ] **Logging**: Replace all instances of `console.log` and `console.error` with NestJS's built-in `Logger` service for better formatted and structured logging.
+- [x] **Logging**: Replace all instances of `console.log` and `console.error` with NestJS's built-in `Logger` service for better formatted and structured logging.
 - [ ] **API Documentation**: Integrate `@nestjs/swagger` to automatically generate OpenAPI documentation for both services.
 - [ ] **Health Checks**: Implement `@nestjs/terminus` for robust health checks (database connectivity, microservice availability) instead of simple static return values.
 - [ ] **Configuration Validation**: Use `joi` or `zod` within `ConfigModule` to validate environment variables (e.g., `DATABASE_URL`, `PORT`, `INVENTORY_BASE_URL`) on application startup.
