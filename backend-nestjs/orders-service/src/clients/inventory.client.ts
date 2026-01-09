@@ -1,10 +1,11 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom, timeout, retry } from 'rxjs';
 
 @Injectable()
 export class InventoryClient {
+    private readonly logger = new Logger(InventoryClient.name);
     private readonly baseURL: string;
     private readonly timeoutMs: number;
     constructor(
@@ -31,7 +32,7 @@ export class InventoryClient {
             );
             return response.data;
         } catch (err) {
-            console.log(err);
+            this.logger.error(err);
 
             // Infrastructure failure (NOT business failure)
             throw new ServiceUnavailableException(

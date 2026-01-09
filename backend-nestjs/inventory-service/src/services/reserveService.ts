@@ -1,9 +1,11 @@
 import { ReserveStockRequestDto, ReserveStockResponseDto } from "@/dto/reserve-stock.dto";
 import { PrismaService } from "@/prisma/prisma.service";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 
 @Injectable()
 export class ReserveService {
+    private readonly logger = new Logger(ReserveService.name);
+
     constructor(private readonly prisma: PrismaService) { }
     async reserveStock(body: ReserveStockRequestDto): Promise<ReserveStockResponseDto> {
         const { productId, quantity } = body
@@ -35,10 +37,10 @@ export class ReserveService {
             });
             return result
         } catch (error) {
-            console.error("ReserveStock transaction error:", error);
+            this.logger.error("ReserveStock transaction error:", error);
             if (error instanceof AggregateError) {
                 for (const e of error.errors) {
-                    console.error("  Inner error:", e);
+                    this.logger.error("  Inner error:", e);
                 }
             }
             return {
