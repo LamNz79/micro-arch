@@ -25,10 +25,11 @@ export class HealthController {
           status: 'up',
         },
       };
-    } catch (e: any) {
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
       throw new HealthCheckError(
         'Database check failed',
-        { database: { status: 'down', message: e.message } },
+        { database: { status: 'down', message } },
       );
     }
   }
