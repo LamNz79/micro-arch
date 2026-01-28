@@ -1,98 +1,340 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Orders Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS microservice responsible for handling order creation and management in the microservices architecture.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🎯 Overview
 
-## Description
+The Orders Service acts as the orchestrator for order processing, communicating with the Inventory Service to reserve stock before confirming orders. It exposes a REST API for order operations and includes Swagger documentation.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠️ Tech Stack
 
-## Project setup
+- **Framework**: NestJS 11.0.1
+- **Language**: TypeScript 5.7.3
+- **HTTP Client**: @nestjs/axios 4.0.1
+- **API Documentation**: Swagger/OpenAPI (@nestjs/swagger 11.2.4)
+- **Configuration**: @nestjs/config 4.0.2
+- **Testing**: Jest 30.0.0
 
-```bash
-$ npm install
+## 📁 Project Structure
+
+```
+orders-service/
+├── src/
+│   ├── main.ts                 # Application entry point
+│   ├── app.module.ts           # Root module
+│   ├── app.controller.ts       # Root controller
+│   ├── app.service.ts          # Root service
+│   ├── controllers/            # REST API controllers
+│   │   └── orders.controller.ts
+│   ├── modules/                # Feature modules
+│   │   └── order.module.ts
+│   └── clients/                # HTTP clients for inter-service communication
+│       └── inventory.client.ts
+├── test/                       # E2E tests
+├── Dockerfile                  # Docker configuration
+├── .env                        # Environment variables
+├── package.json
+└── tsconfig.json
 ```
 
-## Compile and run the project
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20 or higher
+- npm or yarn
+- Inventory Service running (for full functionality)
+
+### Installation
 
 ```bash
-# development
-$ npm run start
+# From the project root (recommended)
+npm install
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Or from the orders-service directory
+cd backend-nestjs/orders-service
+npm install
 ```
 
-## Run tests
+### Configuration
+
+Create a `.env` file in the orders-service directory:
+
+```env
+# Server Configuration
+PORT=3001
+
+# Inventory Service URL
+INVENTORY_BASE_URL=http://localhost:3002
+```
+
+For Docker deployment, use `.env.docker`:
+
+```env
+PORT=3001
+INVENTORY_BASE_URL=http://backend-inventory:3002
+```
+
+### Development
 
 ```bash
-# unit tests
-$ npm run test
+# Start in development mode with hot reload
+npm run start:dev
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Start in debug mode
+npm run start:debug
 ```
 
-## Deployment
+The service will be available at `http://localhost:3001`
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Production
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Build the application
+npm run build
+
+# Start production server
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 📡 API Endpoints
 
-## Resources
+### Base URL
+- Development: `http://localhost:3001`
+- Via Kong Gateway: `http://localhost:8000/api/orders`
 
-Check out a few resources that may come in handy when working with NestJS:
+### Endpoints
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+#### Health Check
+```http
+GET /health
+```
 
-## Support
+**Response:**
+```json
+{
+  "status": "ok"
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### Create Order
+```http
+POST /
+Content-Type: application/json
 
-## Stay in touch
+{
+  "productId": "string",
+  "quantity": number
+}
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**Success Response (200):**
+```json
+{
+  "status": "CONFIRMED"
+}
+```
 
-## License
+**Rejection Response (200):**
+```json
+{
+  "status": "REJECTED",
+  "reason": "Insufficient stock" | "Product not found"
+}
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🏗️ Architecture
+
+### Service Communication
+
+The Orders Service communicates with the Inventory Service using HTTP:
+
+```
+┌─────────────────┐
+│ Orders Service  │
+│                 │
+│  POST /         │
+└────────┬────────┘
+         │
+         │ HTTP POST /reserve
+         ▼
+┌─────────────────┐
+│ Inventory Svc   │
+│                 │
+│  Reserve Stock  │
+└─────────────────┘
+```
+
+### Order Flow
+
+1. Client sends order request to Orders Service
+2. Orders Service calls Inventory Service to reserve stock
+3. If stock is available:
+   - Inventory Service reserves the stock
+   - Orders Service returns `CONFIRMED` status
+4. If stock is unavailable:
+   - Inventory Service returns rejection reason
+   - Orders Service returns `REJECTED` status with reason
+
+### Modules
+
+#### OrdersModule
+Located in `src/modules/order.module.ts`, this module encapsulates:
+- Orders controller
+- Inventory client for inter-service communication
+
+#### InventoryClient
+Located in `src/clients/inventory.client.ts`, handles:
+- HTTP communication with Inventory Service
+- Stock reservation requests
+- Error handling for service communication
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `3001` |
+| `INVENTORY_BASE_URL` | Inventory Service base URL | `http://localhost:3002` |
+
+### Swagger Documentation
+
+Swagger UI is available at `http://localhost:3001/api` when the service is running.
+
+Configuration in `main.ts`:
+```typescript
+const config = new DocumentBuilder()
+  .setTitle('Orders Service API')
+  .setDescription('API for managing orders')
+  .setVersion('1.0')
+  .build();
+```
+
+## 📝 Available Scripts
+
+- `npm run start` - Start the application
+- `npm run start:dev` - Start with hot reload and debug on port 9229
+- `npm run start:debug` - Start in debug mode
+- `npm run start:prod` - Start production build
+- `npm run build` - Build the application
+- `npm run format` - Format code with Prettier
+- `npm run lint` - Lint and fix code
+- `npm test` - Run unit tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:cov` - Run tests with coverage
+- `npm run test:e2e` - Run end-to-end tests
+
+## 🐳 Docker
+
+### Build Image
+
+```bash
+docker build -t orders-service .
+```
+
+### Run Container
+
+```bash
+docker run -p 3001:3001 --env-file .env.docker orders-service
+```
+
+### Docker Compose
+
+```bash
+# From project root
+docker-compose up backend-orders
+```
+
+## 🧪 Testing
+
+### Unit Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate coverage report
+npm run test:cov
+```
+
+### E2E Tests
+
+```bash
+npm run test:e2e
+```
+
+### Debug Tests
+
+```bash
+npm run test:debug
+```
+
+## 🔍 Code Quality
+
+### Linting
+
+```bash
+# Run ESLint
+npm run lint
+
+# Auto-fix issues
+npm run lint -- --fix
+```
+
+### Formatting
+
+```bash
+# Format all TypeScript files
+npm run format
+```
+
+## 📊 Monitoring & Debugging
+
+### Debug Mode
+
+The service supports remote debugging on port `9229`:
+
+```bash
+npm run start:dev
+```
+
+Connect your debugger to `localhost:9229`
+
+### Logging
+
+The service uses `console.log` for logging. See [ISSUES.md](../ISSUES.md) for planned improvements to use NestJS Logger.
+
+## 🚧 Known Issues & Improvements
+
+See [../ISSUES.md](../ISSUES.md) for planned improvements:
+
+- Replace `console.log` with NestJS Logger
+- Improve error handling in InventoryClient
+- Add shared types/DTOs between services
+- Implement comprehensive testing
+- Add health checks with @nestjs/terminus
+
+## 🔗 Related Services
+
+- [Inventory Service](../inventory-service/README.md) - Stock management service
+- [Frontend](../../frontend/README.md) - User interface
+
+## 📚 Additional Resources
+
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [NestJS Microservices](https://docs.nestjs.com/microservices/basics)
+- [Swagger/OpenAPI](https://swagger.io/specification/)
+
+## 🤝 Contributing
+
+When making changes:
+
+1. Follow NestJS best practices
+2. Add appropriate Swagger decorators for API documentation
+3. Write unit tests for new features
+4. Update this README if adding new endpoints or configuration
+5. Ensure TypeScript strict mode compliance

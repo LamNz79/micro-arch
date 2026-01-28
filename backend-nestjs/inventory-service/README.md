@@ -1,98 +1,485 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Inventory Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS microservice responsible for managing product inventory and stock reservations with PostgreSQL persistence using Prisma ORM.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🎯 Overview
 
-## Description
+The Inventory Service manages product stock levels and handles stock reservation requests from the Orders Service. It provides a REST API for inventory operations and uses Prisma for database interactions with PostgreSQL.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠️ Tech Stack
 
-## Project setup
+- **Framework**: NestJS 11.0.1
+- **Language**: TypeScript 5.7.3
+- **ORM**: Prisma 7.2.0 with PostgreSQL adapter
+- **Database**: PostgreSQL 15+
+- **Validation**: class-validator 0.14.3, Zod 4.3.5
+- **API Documentation**: Swagger/OpenAPI (@nestjs/swagger 11.2.4)
+- **Configuration**: @nestjs/config 4.0.2
+- **Testing**: Jest 30.0.0
 
-```bash
-$ npm install
+## 📁 Project Structure
+
+```
+inventory-service/
+├── src/
+│   ├── main.ts                 # Application entry point with validation
+│   ├── app.module.ts           # Root module
+│   ├── app.controller.ts       # Root controller
+│   ├── app.service.ts          # Root service
+│   ├── controllers/            # REST API controllers
+│   │   ├── inventory.controller.ts
+│   │   └── reserve.controller.ts
+│   ├── modules/                # Feature modules
+│   │   ├── inventory.module.ts
+│   │   └── reserve.module.ts
+│   ├── services/               # Business logic
+│   │   └── reserveService.ts
+│   ├── dto/                    # Data Transfer Objects
+│   │   └── reserve-stock.dto.ts
+│   ├── validation/             # Validation schemas
+│   │   └── reserve-stock.schema.ts
+│   └── prisma/                 # Prisma client module
+│       ├── prisma.module.ts
+│       └── prisma.service.ts
+├── prisma/                     # Database schema and migrations
+│   ├── schema.prisma           # Prisma schema
+│   ├── migrations/             # Database migrations
+│   └── seed.ts                 # Database seeding script
+├── Dockerfile                  # Docker configuration
+├── docker-entrypoint.sh        # Docker startup script
+├── .env                        # Environment variables
+├── package.json
+└── tsconfig.json
 ```
 
-## Compile and run the project
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20 or higher
+- PostgreSQL 15 or higher
+- npm or yarn
+
+### Installation
 
 ```bash
-# development
-$ npm run start
+# From the project root (recommended)
+npm install
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Or from the inventory-service directory
+cd backend-nestjs/inventory-service
+npm install
 ```
 
-## Run tests
+### Database Setup
+
+#### 1. Configure Database Connection
+
+Create a `.env` file in the inventory-service directory:
+
+```env
+# Server Configuration
+PORT=3002
+
+# Database Configuration
+DATABASE_URL=postgresql://inventory_user:inventory_pass@localhost:5432/inventory
+```
+
+#### 2. Run Migrations
 
 ```bash
-# unit tests
-$ npm run test
+# Generate Prisma client
+npx prisma generate
 
-# e2e tests
-$ npm run test:e2e
+# Run database migrations
+npx prisma migrate dev
 
-# test coverage
-$ npm run test:cov
+# (Optional) Seed the database
+npx prisma db seed
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Development
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Start in development mode with hot reload
+npm run start:dev
+
+# Start in debug mode
+npm run start:debug
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The service will be available at `http://localhost:3002`
 
-## Resources
+### Production
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+# Build the application
+npm run build
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Start production server
+npm run start:prod
+```
 
-## Support
+## 📡 API Endpoints
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Base URL
+- Development: `http://localhost:3002`
+- Via Kong Gateway: `http://localhost:8000/api/inventory`
 
-## Stay in touch
+### Endpoints
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### Health Check
+```http
+GET /health
+```
 
-## License
+**Response:**
+```json
+{
+  "status": "ok"
+}
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+#### Create Inventory Item (Placeholder)
+```http
+POST /
+```
+
+**Response:**
+```json
+{
+  "product": "inventory-item",
+  "orderId": "uuid",
+  "status": "PENDING"
+}
+```
+
+#### Reserve Stock
+```http
+POST /reserve
+Content-Type: application/json
+
+{
+  "productId": "string",
+  "quantity": number
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "reserved": true,
+  "productId": "abc-123",
+  "quantity": 5
+}
+```
+
+**Failure Response (200):**
+```json
+{
+  "reserved": false,
+  "reason": "Insufficient stock"
+}
+```
+
+**Validation Error (400):**
+```json
+{
+  "statusCode": 400,
+  "message": ["quantity must be a positive number"],
+  "error": "Bad Request"
+}
+```
+
+## 🗄️ Database Schema
+
+### Product Model
+
+```prisma
+model Product {
+  id    String @id @default(uuid())
+  name  String
+  stock Int
+}
+```
+
+### Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | String (UUID) | Unique product identifier |
+| `name` | String | Product name |
+| `stock` | Int | Available stock quantity |
+
+## 🏗️ Architecture
+
+### Service Layers
+
+```
+┌─────────────────────────────────────┐
+│         Controllers                 │
+│  (HTTP Request Handling)            │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│          Services                   │
+│  (Business Logic)                   │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│       Prisma Service                │
+│  (Database Access)                  │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│       PostgreSQL                    │
+└─────────────────────────────────────┘
+```
+
+### Modules
+
+#### InventoryModule
+Handles basic inventory operations (placeholder for future expansion)
+
+#### ReserveModule
+Manages stock reservation logic:
+- Validates reservation requests
+- Checks stock availability
+- Updates stock levels atomically
+
+#### PrismaModule
+Provides database client across the application:
+- Connection management
+- Query execution
+- Transaction support
+
+### Validation Strategy
+
+The service uses a **dual validation approach**:
+
+1. **Zod Schema Validation** - In controllers for request parsing
+2. **class-validator** - Global validation pipe for DTOs
+
+> **Note**: See [ISSUES.md](../ISSUES.md) for planned standardization
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `3002` |
+| `DATABASE_URL` | PostgreSQL connection string | Required |
+
+### Prisma Configuration
+
+The Prisma client is configured in `prisma.config.ts` with custom output settings.
+
+### Swagger Documentation
+
+Swagger UI is available at `http://localhost:3002/api` when the service is running.
+
+Configuration in `main.ts`:
+```typescript
+const config = new DocumentBuilder()
+  .setTitle('Inventory Service API')
+  .setDescription('API for managing inventory and stock')
+  .setVersion('1.0')
+  .build();
+```
+
+## 📝 Available Scripts
+
+- `npm run start` - Start the application
+- `npm run start:dev` - Start with hot reload and debug on port 9230
+- `npm run start:debug` - Start in debug mode
+- `npm run start:prod` - Start production build
+- `npm run build` - Build the application
+- `npm run format` - Format code with Prettier
+- `npm run lint` - Lint and fix code
+- `npm test` - Run unit tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:cov` - Run tests with coverage
+- `npm run test:e2e` - Run end-to-end tests
+
+### Prisma Scripts
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Create a new migration
+npx prisma migrate dev --name migration_name
+
+# Apply migrations in production
+npx prisma migrate deploy
+
+# Open Prisma Studio (database GUI)
+npx prisma studio
+
+# Seed the database
+npx prisma db seed
+```
+
+## 🐳 Docker
+
+### Build Image
+
+```bash
+docker build -t inventory-service .
+```
+
+### Run Container
+
+```bash
+docker run -p 3002:3002 --env-file .env inventory-service
+```
+
+The Dockerfile includes:
+- Multi-stage build for optimized image size
+- Automatic Prisma client generation
+- Database migration on startup (via `docker-entrypoint.sh`)
+
+### Docker Compose
+
+```bash
+# From project root - starts service with PostgreSQL
+docker-compose up backend-inventory inventory-db
+```
+
+## 🧪 Testing
+
+### Unit Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate coverage report
+npm run test:cov
+```
+
+### E2E Tests
+
+```bash
+npm run test:e2e
+```
+
+### Debug Tests
+
+```bash
+npm run test:debug
+```
+
+## 🔍 Code Quality
+
+### Linting
+
+```bash
+# Run ESLint
+npm run lint
+
+# Auto-fix issues
+npm run lint -- --fix
+```
+
+### Formatting
+
+```bash
+# Format all TypeScript files
+npm run format
+```
+
+## 📊 Monitoring & Debugging
+
+### Debug Mode
+
+The service supports remote debugging on port `9230`:
+
+```bash
+npm run start:dev
+```
+
+Connect your debugger to `localhost:9230`
+
+### Database Monitoring
+
+Use Prisma Studio for visual database inspection:
+
+```bash
+npx prisma studio
+```
+
+Opens at `http://localhost:5555`
+
+### Logging
+
+The service uses `console.log` for logging. See [ISSUES.md](../ISSUES.md) for planned improvements to use NestJS Logger.
+
+## 🔐 Data Validation
+
+### Request DTOs
+
+**ReserveStockRequestDto:**
+```typescript
+{
+  productId: string;  // Required, non-empty
+  quantity: number;   // Required, positive integer
+}
+```
+
+**ReserveStockResponseDto:**
+```typescript
+{
+  reserved: boolean;
+  productId?: string;
+  quantity?: number;
+  reason?: string;    // Present when reserved = false
+}
+```
+
+### Validation Rules
+
+- `productId`: Must be a non-empty string
+- `quantity`: Must be a positive number
+
+## 🚧 Known Issues & Improvements
+
+See [../ISSUES.md](../ISSUES.md) for planned improvements:
+
+- Standardize validation strategy (class-validator vs Zod)
+- Replace `console.log` with NestJS Logger
+- Improve error handling in ReserveService
+- Add comprehensive unit tests
+- Implement health checks with @nestjs/terminus
+- Add configuration validation with Joi/Zod
+
+## 🔗 Related Services
+
+- [Orders Service](../orders-service/README.md) - Order management service
+- [Frontend](../../frontend/README.md) - User interface
+
+## 📚 Additional Resources
+
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [Zod Documentation](https://zod.dev/)
+
+## 🤝 Contributing
+
+When making changes:
+
+1. Follow NestJS best practices
+2. Update Prisma schema for database changes
+3. Create migrations for schema changes
+4. Add appropriate Swagger decorators for API documentation
+5. Write unit tests for new features
+6. Update this README if adding new endpoints or configuration
+7. Ensure TypeScript strict mode compliance
