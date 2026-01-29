@@ -33,15 +33,34 @@ services:
     volumes:
       - inventory-data:/var/lib/postgresql/data
   kong:
-    image: kong:latest
+    image: kong/kong-gateway:3.13
     container_name: kong
     ports:
       - "8000:8000"
-    volumes:
-      - ./kong/kong.yml:/kong/declarative/kong.yml
+      - "8443:8443"
+
     environment:
+      KONG_ROLE: data_plane
       KONG_DATABASE: "off"
-      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+      KONG_KONNECT_MODE: "on"
+
+      KONG_CLUSTER_MTLS: pki
+      KONG_CLUSTER_CONTROL_PLANE: c8366794f0.us.cp.konghq.com:443
+      KONG_CLUSTER_SERVER_NAME: c8366794f0.us.cp.konghq.com
+
+      KONG_CLUSTER_TELEMETRY_ENDPOINT: c8366794f0.us.tp.konghq.com:443
+      KONG_CLUSTER_TELEMETRY_SERVER_NAME: c8366794f0.us.tp.konghq.com
+
+      KONG_CLUSTER_CERT: /etc/kong/cluster.crt
+      KONG_CLUSTER_CERT_KEY: /etc/kong/cluster.key
+
+      KONG_LUA_SSL_TRUSTED_CERTIFICATE: system
+      KONG_ROUTER_FLAVOR: expressions
+
+    volumes:
+      - ./certs/cluster.crt:/etc/kong/cluster.crt:ro
+      - ./certs/cluster.key:/etc/kong/cluster.key:ro
+
     depends_on:
       - backend-orders
       - backend-inventory
