@@ -21,4 +21,4 @@ npx prisma migrate deploy --schema=/app/prisma/schema.prisma
 
 
 echo "Starting application..."
-exec node -r module-alias/register dist/backend-inventory/src/main.js
+exec node -r module-alias/register dist/main.js
