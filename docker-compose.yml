@@ -1,61 +1,61 @@
-# services:
-#   backend-orders:
-#     build:
-#       context: ./backend-nestjs/orders-service
-#       dockerfile: Dockerfile
-#     container_name: backend-orders
-#     ports:
-#       - "3001:3001"
-#     env_file:
-#       - ./backend-nestjs/orders-service/.env
-#     image: lamlun123/backend-orders:1.0.1
-#   backend-inventory:
-#     build:
-#       context: ./backend-nestjs/inventory-service
-#       dockerfile: Dockerfile
-#     container_name: backend-inventory
-#     ports:
-#       - "3002:3002"
-#     env_file:
-#       - ./backend-nestjs/inventory-service/.env
-#     image: lamlun123/backend-inventory:1.0.1
-#     depends_on:
-#       - inventory-db
-#   inventory-db:
-#     image: postgres:15
-#     container_name: inventory-db
-#     environment:
-#       POSTGRES_DB: inventory
-#       POSTGRES_USER: inventory_user
-#       POSTGRES_PASSWORD: inventory_pass
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - inventory-data:/var/lib/postgresql/data
-#   kong:
-#     image: kong:latest
-#     container_name: kong
-#     ports:
-#       - "8000:8000"
-#     volumes:
-#       - ./kong/kong.yml:/kong/declarative/kong.yml
-#     environment:
-#       KONG_DATABASE: "off"
-#       KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
-#     depends_on:
-#       - backend-orders
-#       - backend-inventory
-# volumes:
-#   inventory-data:
-
-# ==============
-# DOTNET
-# ==============
-
 services:
-  backend-inventory-dotnet:
+  backend-orders:
     build:
-      context: ./backend-dotnet/inventory-service/inventory
-    container_name: backend-inventory-dotnet
+      context: ./backend-nestjs/orders-service
+      dockerfile: Dockerfile
+    container_name: backend-orders
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./backend-nestjs/orders-service/.env
+    image: lamlun123/backend-orders:1.0.1
+  backend-inventory:
+    build:
+      context: ./backend-nestjs/inventory-service
+      dockerfile: Dockerfile
+    container_name: backend-inventory
     ports:
       - "3002:3002"
+    env_file:
+      - ./backend-nestjs/inventory-service/.env
+    image: lamlun123/backend-inventory:1.0.1
+    depends_on:
+      - inventory-db
+  inventory-db:
+    image: postgres:15
+    container_name: inventory-db
+    environment:
+      POSTGRES_DB: inventory
+      POSTGRES_USER: inventory_user
+      POSTGRES_PASSWORD: inventory_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - inventory-data:/var/lib/postgresql/data
+  kong:
+    image: kong:latest
+    container_name: kong
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./kong/kong.yml:/kong/declarative/kong.yml
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+    depends_on:
+      - backend-orders
+      - backend-inventory
+volumes:
+  inventory-data:
+
+    # ==============
+    # DOTNET
+    # ==============
+
+    # services:
+    #   backend-inventory-dotnet:
+    #     build:
+    #       context: ./backend-dotnet/inventory-service/inventory
+    #     container_name: backend-inventory-dotnet
+    #     ports:
+    #       - "3002:3002"
