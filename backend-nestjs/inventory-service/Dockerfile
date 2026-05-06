@@ -25,8 +25,8 @@ COPY src ./src
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
-RUN chmod +x docker-entrypoint.sh
-
+RUN chmod +x docker-entrypoint.sh && \
+    sed -i 's/\r$//' docker-entrypoint.sh  # Remove CRLF line endings
 # Build NestJS
 RUN npm run build
 
