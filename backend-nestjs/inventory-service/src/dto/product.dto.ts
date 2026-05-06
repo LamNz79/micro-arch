@@ -1,10 +1,23 @@
-// import { IsNotEmpty, IsString } from "class-validator";
+import { IsString, IsNotEmpty, IsNumber, IsOptional, Min } from 'class-validator';
 
-// export class productRequestDTO {
-//     @IsString()
-//     @IsNotEmpty()
-//     readonly productId: string = '';
-//     @IsNumber()
-//     @IsNotEmpty()
-//     readonly quantity: number = 0;
-// }
+export class CreateProductDto {
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @Min(0)
+  stock!: number;
+}
+
+export class UpdateProductDto {
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  stock?: number;
+}
