@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { OrdersModule } from '@/modules/order.module';
+import { HealthModule } from '@/health/health.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { OrdersModule } from '@/modules/order.module';
     }),
     OrdersModule,
     HttpModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
